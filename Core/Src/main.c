@@ -35,7 +35,7 @@
 extern uint8_t RxBuf1[100]; 
 extern DMA_HandleTypeDef hdma_usart1_rx;
  #define res        IWDG->KR  = 0xAAAA;
-
+//maziar soliemani
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
