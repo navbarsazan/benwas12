@@ -81,8 +81,7 @@ uint8_t WARN=0;
 uint8_t WARN1=0;
 uint8_t WARN2=0;
 uint8_t WARN3=0;
-uint8_t WARN3=4;
-/* Private typedef -----------------------------------------------------------*/
+ /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
