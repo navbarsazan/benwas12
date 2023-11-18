@@ -15,7 +15,7 @@ file:event_save.c
 #define  sec_key  HAL_GPIO_ReadPin( GPIOB,GPIO_PIN_15  )
 extern RTC_DateTypeDef DateToUpdate1;
 uint8_t ty ;
- char sa[330];
+ char sa[362];
 
  uint32_t  test = (uint32_t ) 0x0801fa00;
  uint8_t courser1=1;;
@@ -25,7 +25,7 @@ extern RTC_TimeTypeDef  current_time;
  extern RTC_DateTypeDef current_date;
 extern RTC_HandleTypeDef hrtc;
 extern uint16_t KEY ;
-char ti[12];
+char ti[16];
 		uint8_t arr[3]={1,2,3};
     uint8_t u=0;
 char im[12];
@@ -199,7 +199,8 @@ void scroll(void){
 
 void event_save(uint8_t coun){
 	
-		 HAL_RTC_GetTime(&hrtc,&current_time,RTC_FORMAT_BIN);
+
+ 	HAL_RTC_GetTime(&hrtc,&current_time,RTC_FORMAT_BIN);
 			HAL_RTC_GetDate(&hrtc,&DateToUpdate1,RTC_FORMAT_BIN);
 
 	   	sprintf(ti ,"%02d:%02d ",current_time.Hours,current_time.Minutes );

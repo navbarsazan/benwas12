@@ -89,9 +89,11 @@ void Error_Handler(void);
 #define down_EXTI_IRQn EXTI15_10_IRQn
 void manual(void);
 void AUTOPILOT(void);
+void second_buzzer(void);
+void first_buzzer(void);
 
 /* USER CODE BEGIN Private defines */
-  void ADC_CHECK(void);
+void ADC_CHECK(void);
 
 /* USER CODE END Private defines */
 

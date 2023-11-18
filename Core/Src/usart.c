@@ -76,7 +76,7 @@ extern int sige;
 #define manu  HAL_GPIO_ReadPin( GPIOB,GPIO_PIN_0  )
  
   extern uint8_t TIMO;
-
+uint8_t out_al=0;
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
@@ -243,6 +243,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 								temp1=0;
 								dg=1;
 								moh1=1;
+								  out_al=1;
 								
 							}
 				}
@@ -251,19 +252,21 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 					    TX_Buffer7[0]=((TX_Buffer7[0])|0x01);
 					    temp1=1;
               if(moh3==0 && moh2==0){
-					    dg=0;
+					       dg=0;
 							}
 				}
 	 	      if(RxBuf1[2]=='T' && RxBuf1[3]==0x22){//comp2--led2
 
 							 
-					    TX_Buffer7[0]=~((~TX_Buffer7[0])|0x02);
+					      TX_Buffer7[0]=~((~TX_Buffer7[0])|0x02);
 						  
 						    moh2=1;
+						
 							 if(temp2==1){
 								event_save(2);
 								temp2=0;
 								  dg=1;
+								 out_al=1;
 								
 							}
 					}
@@ -284,6 +287,8 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 							 if(temp3==1){
 								event_save(3);
 								 	dg=1;
+								 out_al=1;
+								 temp3=0;
 								
 							}
 					}

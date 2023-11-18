@@ -24,7 +24,8 @@ extern uint8_t CR ;
 extern uint8_t TUI;
 extern int sige;
 uint8_t p=0;
-
+extern uint8_t out_al;
+extern uint32_t lev;
 uint8_t p1=0;
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -42,11 +43,14 @@ uint8_t p1=0;
 #define EXT_ON    HAL_GPIO_WritePin(GPIOB,  GPIO_PIN_14, GPIO_PIN_SET)
 #define EXT_OFF    HAL_GPIO_WritePin(GPIOB,  GPIO_PIN_14, GPIO_PIN_RESET)
 #define manu  HAL_GPIO_ReadPin( GPIOB,GPIO_PIN_0  )
+uint32_t silent1=0;
 
  uint8_t yg=1;
 uint8_t h=0;
 extern uint8_t TIMO;
 extern uint8_t dg;
+extern uint8_t sw;
+
 uint8_t lev1=0;
 uint8_t FGK=0;
 
@@ -353,16 +357,16 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 				}
 					p++;
 				 
-    					if(dg==1 && p1==100){
+    				/*	if(dg==1 && p1==100){
 								  lev1++;
 						  if(lev1%2==0){	
-								INTERNAL_ON;
+							 INTERNAL_ON;
              
 							}
 							else{
-								INTERNAL_OFF;	
+								 INTERNAL_OFF;	
 							}
-									 }
+									 }*/
 
 				  				if(p1==100){
 					       p1=0;
@@ -370,8 +374,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
                  INTERNAL_OFF;
 					       KEY=0;
 									dg=0;
-
-             
+     
 			}
 				 }
 									
@@ -384,6 +387,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 			  // ADC_CHECK();
 
 			CONT=0;
+
  			if(  HAL_GPIO_ReadPin( GPIOA,  gpi)==0){
 
  				  KEY=gpi;
@@ -397,12 +401,42 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 	        EXT_OFF;
 						 TX_Buffer7[0]=((TX_Buffer7[0])|0x20);//LED OFF
 					}
-			                                
 
 		}
 	}
 		    if(htim==&htim4){
- 
+ 			if(  out_al==1){
+							lev+=1;
+				if(KEY==reset_Pin){
+            silent1++;
+					   KEY=0;}
+				if(silent1>=1){
+				  silent1=0;
+			    INTERNAL_OFF;
+	        EXT_OFF;
+					out_al=0;
+				
+					TX_Buffer7[0]=((TX_Buffer7[0])|0x20);
+			    HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100);
+				  TX_Buffer7[0]=((TX_Buffer7[0])|0x10);
+					HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100);
+
+				  lev=0;
+
+				}
+        else if(lev<120){
+			   	first_buzzer();
+
+				}
+				else if(lev>=120){
+					 sw=1;
+					second_buzzer();
+
+				}
+				
+				
+				
+			}
 					   if(manu==1&& hg==1){
 					   manual();
 

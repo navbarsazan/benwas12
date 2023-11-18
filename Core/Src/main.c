@@ -32,6 +32,7 @@
 #include "EVENT_SAVE.h"
 #include "string.h"
 #include "stdio.h"
+extern int sw;
 extern uint8_t RxBuf1[100]; 
 extern DMA_HandleTypeDef hdma_usart1_rx;
  #define res        IWDG->KR  = 0xAAAA;
@@ -81,7 +82,7 @@ uint8_t WARN=0;
 uint8_t WARN1=0;
 uint8_t WARN2=0;
 uint8_t WARN3=0;
- /* Private typedef -----------------------------------------------------------*/
+  /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -183,19 +184,19 @@ void second_buzzer(void){
 	INTERNAL_OFF;
 	EXT_ON;
 if(lev%2==0){	
-	TX_Buffer7[0]=((TX_Buffer7[0])|0x20);
+	TX_Buffer7[0]=((TX_Buffer7[0])|0x10);
 	 HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100);
  
 }
 else{
  
- TX_Buffer7[0]=~((~TX_Buffer7[0])|0x20);
+ TX_Buffer7[0]=~((~TX_Buffer7[0])|0x10);
 			  HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100);
 
 }
 	
 }
-void lk(void){
+void lk(void){//timer watch reference
 
  	    HAL_FLASH_Lock(); 
      	mj2 =   *( uint8_t *)(0x0801ff22);
@@ -298,6 +299,7 @@ void manual(void){
   */
 
 int main(void)
+
 {
   /* USER CODE BEGIN 1 */
 
@@ -437,17 +439,19 @@ int main(void)
 				  lev=0;
 
 				}
-        else if(lev<60){
+        else if(lev<120){
 			   	first_buzzer();
 
 				}
-				else if(lev>=60){
+				else if(lev>=120){
+					 sw=1;
 					second_buzzer();
 
 				}
 
 			}
 			else{
+				sw=0;
 			 if(sec==0){
 				sec=60;
 				minu-=1;
@@ -476,14 +480,7 @@ int main(void)
 					
 			}
 		}   
-		    // HAL_Delay(200);
-		// HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100); //Sending in Blocking mode
-
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-  
-  /* USER CODE END 3 */
+ 
 }
 }
 /**
