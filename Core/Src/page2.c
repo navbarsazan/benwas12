@@ -6,6 +6,7 @@ file:pag2.c
 #include "main.h"
 #include "LCD.h"
 #include "menu.h"
+#include "tim.h"
 #include "stdio.h"
 #include "stm32f1xx_hal.h"
 #include "page2.h"
@@ -43,12 +44,11 @@ extern uint8_t sec;
 		   while(KEY!=esc_Pin )	{
        res;				 
 			   	LCD_Blinkoff();	
- 			     HAL_ADC_Start(&hadc1);
-        HAL_ADC_PollForConversion(&hadc1, 1);
-	      AD_AC = HAL_ADC_GetValue(&hadc1);
+ 		
+
 		   if(AD_AC<3000){
-          lcd_set_cursor(1, 4); 
-		    lcd_write_string("DC POWER");
+         lcd_set_cursor(1, 4); 
+		     lcd_write_string("DC POWER");
 				 HAL_Delay(400);
 				 
 			 }	
@@ -75,12 +75,6 @@ extern uint8_t sec;
 		   	LCD_Blinkoff();
 		   while(KEY!=esc_Pin )	{
 				 res;	
- 					HAL_ADC_Start(&hadc1);
-          HAL_ADC_PollForConversion(&hadc1, 1);
-          AD_AC = HAL_ADC_GetValue(&hadc1);
- 					HAL_ADC_Start(&hadc2);
-          HAL_ADC_PollForConversion(&hadc2, 1);
-          AD_DC = HAL_ADC_GetValue(&hadc2);
  				 sprintf(volac,"%0.2fV",(AD_AC*12)/4095);
 				 
 				 sprintf(voldc,"%0.2fV",(AD_DC*12)/4095);
@@ -133,6 +127,7 @@ extern uint8_t sec;
 			 	lcd_clear();
 			  lcd_set_cursor(0, 0); 
 		  	KEY=0;
+	 
 			  lcd_write_string("#MANUAL");	
 			  lcd_set_cursor(1, 0); 
 			  lcd_write_string("#AUTO(PILOT)");
@@ -140,7 +135,7 @@ extern uint8_t sec;
 		 	  lcd_write_string("*");
        	LCD_BlinkOn();	
         lcd_set_cursor(CR, 0);		
-        courser2	=0;		
+        courser2	=CR;		
 		  	 
 				while(KEY!=esc_Pin )	{	
 					res;	
@@ -281,7 +276,7 @@ extern uint8_t sec;
 	   lcd_set_cursor(0, 0);	
 	   LCD_BlinkOn();
 		 KEY=0;
-		 courser2=0;
+		 courser2=CR;
      while(KEY!=esc_Pin )	{	
 			 res;	
  	      if(JU==1 ){

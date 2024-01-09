@@ -111,7 +111,7 @@ int rese=1;
 uint16_t gpi=0;
 extern TIM_HandleTypeDef htim3;
 uint16_t KEY=0;
-/** @addtogroup STM32F1xx_HAL_Driver
+ /** @addtogroup STM32F1xx_HAL_Driver
   * @{
   */
 

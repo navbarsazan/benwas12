@@ -36,6 +36,7 @@ mohsen\page2.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
 mohsen\page2.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
 mohsen\page2.o: ..\Core\Src\LCD.h
 mohsen\page2.o: ..\Core\Src\menu.h
+mohsen\page2.o: ../Core/Inc/tim.h
 mohsen\page2.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 mohsen\page2.o: ..\Core\Src\page2.h
 mohsen\page2.o: ..\Core\Src\page3.h

@@ -74,7 +74,12 @@ extern int sige;
 #define EXT_ON    HAL_GPIO_WritePin(GPIOB,  GPIO_PIN_14, GPIO_PIN_SET)
 #define EXT_OFF    HAL_GPIO_WritePin(GPIOB,  GPIO_PIN_14, GPIO_PIN_RESET)
 #define manu  HAL_GPIO_ReadPin( GPIOB,GPIO_PIN_0  )
- 
+#define LED1_ON TX_Buffer7[0]=~((~TX_Buffer7[0])|0x01);
+#define LED1_OFF TX_Buffer7[0]=((TX_Buffer7[0])|0x01);
+#define LED2_ON TX_Buffer7[0]=~((~TX_Buffer7[0])|0x02)
+#define LED2_OFF TX_Buffer7[0]=((TX_Buffer7[0])|0x02);
+#define LED3_ON TX_Buffer7[0]=~((~TX_Buffer7[0])|0x04);
+#define LED3_OFF TX_Buffer7[0]=((TX_Buffer7[0])|0x04);
   extern uint8_t TIMO;
 uint8_t out_al=0;
 /* Private typedef -----------------------------------------------------------*/
@@ -236,20 +241,20 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 		  // ADC_CHECK();
 
 			  if(RxBuf1[0]=='T' && RxBuf1[1]=='!'){//comp1--led1
- 
-					    TX_Buffer7[0]=~((~TX_Buffer7[0])|0x01);
+            
+					    LED1_ON;
 					    if(temp1==1){
 								event_save(1);
 								temp1=0;
 								dg=1;
 								moh1=1;
-								  out_al=1;
+								out_al=1;
 								
 							}
 				}
 				else if(RxBuf1[0]=='O' && RxBuf1[1]=='!'){//comp1--led1
  
-					    TX_Buffer7[0]=((TX_Buffer7[0])|0x01);
+					    LED1_OFF;
 					    temp1=1;
               if(moh3==0 && moh2==0){
 					       dg=0;
@@ -258,7 +263,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 	 	      if(RxBuf1[2]=='T' && RxBuf1[3]==0x22){//comp2--led2
 
 							 
-					      TX_Buffer7[0]=~((~TX_Buffer7[0])|0x02);
+					      LED2_ON;
 						  
 						    moh2=1;
 						
@@ -272,7 +277,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 					}
 			  else if(RxBuf1[2]=='O' && RxBuf1[3]==0x22){//comp2--led2
 					
-					    TX_Buffer7[0]=((TX_Buffer7[0])|0x02);
+					    LED2_OFF;
 					    temp2=1;
 					    
 					  if(moh1==0 && moh3==0){
@@ -281,7 +286,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 					
 				}							
 	 	      if(RxBuf1[4]=='T' && RxBuf1[5]==0x23){//comp3--led3
-					    TX_Buffer7[0]=~((~TX_Buffer7[0])|0x04);
+					    LED3_ON;
 						    moh3=1;
 					    
 							 if(temp3==1){
@@ -296,7 +301,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 					 if(moh2==0 && moh1==0){
 					    dg=0;
 							}
- 					    TX_Buffer7[0]=((TX_Buffer7[0])|0x04);
+ 					    LED3_OFF;
 				    	temp3=1;
 				}				 						
 						 

@@ -42,11 +42,11 @@ extern	 ADC_HandleTypeDef hadc1;
 extern   ADC_HandleTypeDef hadc2;
 extern uint8_t minu;
 extern uint8_t sec; 
- uint8_t courser3=0;
- char le;
- extern uint8_t TX_Buffer7[1] ;
- 
-  void ALARAM_EXTERNAL_TEST(void){  
+uint8_t courser3=0;
+uint8_t LED_STATUS=0;
+char le;
+extern uint8_t TX_Buffer7[1] ;
+ void ALARAM_EXTERNAL_TEST(void){  
 	      KEY=0;
 		   	lcd_clear();
 			  lcd_set_cursor(0, 0); 
@@ -168,6 +168,7 @@ extern uint8_t sec;
 				 MANUAL_OFF;
 	    	 HAL_I2C_Master_Transmit(&hi2c1,0x41,&led_buf,1,100);
 				 HAL_Delay(1000);
+		     LED_STATUS=1;
 
 		   for(int b=0;b<4;b++){
 				 led_buf=led_buf<<1;
@@ -213,6 +214,7 @@ extern uint8_t sec;
 	      	lcd_send_data(0xff);					 
 					 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
 					HAL_Delay(1000);
+		     LED_STATUS=0;
 
           TIMO=1;
 	} 

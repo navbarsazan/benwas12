@@ -25,8 +25,13 @@ extern uint8_t TUI;
 extern int sige;
 uint8_t p=0;
 extern uint8_t out_al;
+ uint32_t lev1=0;
 extern uint32_t lev;
 uint8_t p1=0;
+extern uint8_t LED_STATUS;
+extern uint8_t temp1;
+extern uint8_t temp2;
+extern uint8_t temp3;
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #define reset_Pin GPIO_PIN_8
@@ -43,6 +48,11 @@ uint8_t p1=0;
 #define EXT_ON    HAL_GPIO_WritePin(GPIOB,  GPIO_PIN_14, GPIO_PIN_SET)
 #define EXT_OFF    HAL_GPIO_WritePin(GPIOB,  GPIO_PIN_14, GPIO_PIN_RESET)
 #define manu  HAL_GPIO_ReadPin( GPIOB,GPIO_PIN_0  )
+#define data_led_on  TX_Buffer7[0]=~((~TX_Buffer7[0])|0x08);
+#define data_led_off  TX_Buffer7[0]=((TX_Buffer7[0])|0x08);
+#define LED1_OFF TX_Buffer7[0]=((TX_Buffer7[0])|0x01);
+#define LED2_OFF TX_Buffer7[0]=((TX_Buffer7[0])|0x02);
+#define LED3_OFF TX_Buffer7[0]=((TX_Buffer7[0])|0x04);
 uint32_t silent1=0;
 
  uint8_t yg=1;
@@ -50,10 +60,10 @@ uint8_t h=0;
 extern uint8_t TIMO;
 extern uint8_t dg;
 extern uint8_t sw;
-
-uint8_t lev1=0;
+extern uint32_t silent;
 uint8_t FGK=0;
-
+uint16_t KEY2=0;
+uint16_t dtc2=1;
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
@@ -331,26 +341,31 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 				
 				 if(h==0){
 					 h=1;
-					 TX_Buffer7[0]=~((~TX_Buffer7[0])|0x08);
-					  HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100);
+					  if(LED_STATUS==0){
+					 data_led_on;
+					  HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100);}
 					 yg=1;
 				 }
 				 else{
-					 TX_Buffer7[0]= (( TX_Buffer7[0])|0x08);
-					  HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100);
+					  if(LED_STATUS==0){
+					 data_led_off;
+					  HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100);}
 					 h=0;
 				 }
 				
 			}
 			else{
+
 				if(yg==1 && p==1){
 						TX_Buffer7[0]= (( TX_Buffer7[0])|0x08);
 					  HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100);
 					 h=0;
 					yg=0;
+					
 				}
 
 			}
+
 						
 				if(p==100){
 					p=0;
@@ -366,7 +381,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 							else{
 								 INTERNAL_OFF;	
 							}
-									 }*/
+									 }
 
 				  				if(p1==100){
 					       p1=0;
@@ -374,9 +389,9 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
                  INTERNAL_OFF;
 					       KEY=0;
 									dg=0;
-     
+      
 			}
-				 }
+				 }*/
 									
 				         	p1++;
 			 }
@@ -391,6 +406,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
  			if(  HAL_GPIO_ReadPin( GPIOA,  gpi)==0){
 
  				  KEY=gpi;
+				  KEY2=gpi;
 				
           if(KEY==auto_Pin){
 						
@@ -398,7 +414,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 				    JU=1;		
 						hg=1;
 					 INTERNAL_OFF;
-	        EXT_OFF;
+	          EXT_OFF;
 						 TX_Buffer7[0]=((TX_Buffer7[0])|0x20);//LED OFF
 					}
 
@@ -406,7 +422,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 	}
 		    if(htim==&htim4){
  			if(  out_al==1){
-							lev+=1;
+							lev1+=1;
 				if(KEY==reset_Pin){
             silent1++;
 					   KEY=0;}
@@ -421,18 +437,17 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 				  TX_Buffer7[0]=((TX_Buffer7[0])|0x10);
 					HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100);
 
-				  lev=0;
+				  lev1=0;
 
 				}
-        else if(lev<120){
-			   	first_buzzer();
-
+        else if(lev1>=1){
+			    sw=1;
+					  if(TIMO==1){
+					second_buzzer(lev1);
+					REP=0;
+						}
 				}
-				else if(lev>=120){
-					 sw=1;
-					second_buzzer();
-
-				}
+         
 				
 				
 				
@@ -453,21 +468,35 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
            			
   			if(  dtc==1 ){			
              dtc=0;
-			}
-				else{
-			 KEY=0;
- 					
-				}
-				REP=0;
+					    dtc2=0;
 			}
 
+				
+			}
+			if(REP==33){	
+		 if(dtc==1 ){			
+         dtc=0;
+				 dtc2=0;
+			}
+		 else{
+			  dtc2=1;
+			  temp1=1;
+				temp2=1;
+				temp3=1;
+		     LED1_OFF ;
+         LED2_OFF ;
+         LED3_OFF }
+			  KEY=0;
+				
+ 					REP=0;
+				}
 				if(STAR==1){//THIS PART IS USED THAT IF USER NOT USING THE MENU ABOVE 30SEC IT WILL BACK TO THE HOURS AND DATE DISPLAY AUTOMATICALLY
-					if(CONT==30){
+					if(CONT==60){
 						   //ADC_CHECK();
 
  						KEY=esc_Pin;	
  					}
-	    	if(CONT==31){
+	    	if(CONT==61){
 						
 						STAR=0;
 						KEY=esc_Pin;	

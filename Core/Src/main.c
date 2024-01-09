@@ -32,6 +32,8 @@
 #include "EVENT_SAVE.h"
 #include "string.h"
 #include "stdio.h"
+extern uint16_t KEY2;
+
 extern int sw;
 extern uint8_t RxBuf1[100]; 
 extern DMA_HandleTypeDef hdma_usart1_rx;
@@ -75,7 +77,11 @@ extern uint8_t FGK;
 #define EXT_ON    HAL_GPIO_WritePin(GPIOB,  GPIO_PIN_14, GPIO_PIN_SET)
 #define EXT_OFF    HAL_GPIO_WritePin(GPIOB,  GPIO_PIN_14, GPIO_PIN_RESET)
 #define manu  HAL_GPIO_ReadPin( GPIOB,GPIO_PIN_0  )
+#define LED_ON_FIRSTBUZZER  TX_Buffer7[0]=~((~TX_Buffer7[0])|0x10);
+#define LED_OFF_FIRSTBUZZER  TX_Buffer7[0]=((TX_Buffer7[0])|0x10);
+#define LED_ON_SECONDBUZZER  TX_Buffer7[0]=~((~TX_Buffer7[0])|0x20)
 
+#define LED_OFF_SECONDBUZZER  TX_Buffer7[0]=((TX_Buffer7[0])|0x20)
 
 extern uint8_t TIMO;
 uint8_t WARN=0;
@@ -161,17 +167,17 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 uint32_t lev;
 uint32_t silent=0;
-void first_buzzer(void){
-	
-if(lev%2==0){	
-	INTERNAL_ON;
+void second_buzzer(uint32_t lec){
+	 
+if(lec%2==0){	
+	INTERNAL_OFF;
+	EXT_ON;
 	TX_Buffer7[0]=~((~TX_Buffer7[0])|0x20);//LED ON
 	HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,10);
 
 }
 else{
-	INTERNAL_OFF;
- TX_Buffer7[0]=((TX_Buffer7[0])|0x20);//LED OFF
+  TX_Buffer7[0]=((TX_Buffer7[0])|0x20);//LED OFF
  HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,10);
 
 	
@@ -180,17 +186,17 @@ else{
 
      
 }
-void second_buzzer(void){
-	INTERNAL_OFF;
-	EXT_ON;
-if(lev%2==0){	
-	TX_Buffer7[0]=((TX_Buffer7[0])|0x10);
+void first_buzzer(void){
+ 
+ if(lev%2==0){	
+	INTERNAL_ON;
+	LED_ON_FIRSTBUZZER;
 	 HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100);
  
 }
 else{
- 
- TX_Buffer7[0]=~((~TX_Buffer7[0])|0x10);
+ INTERNAL_OFF;
+ LED_OFF_FIRSTBUZZER;
 			  HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100);
 
 }
@@ -255,13 +261,18 @@ void manual(void){
 	
 	
 }
-  void ADC_CHECK(void){
+
+  void MEASURMENT(void){
+
 		    HAL_ADC_Start(&hadc2);
         HAL_ADC_PollForConversion(&hadc2, 1);
         AD_DC = HAL_ADC_GetValue(&hadc2);
 			     HAL_ADC_Start(&hadc1);
         HAL_ADC_PollForConversion(&hadc1, 1);
 	      AD_AC = HAL_ADC_GetValue(&hadc1);
+	}
+void ADC_CHECK(void){
+        MEASURMENT();
 
 		   if(AD_AC<0XeaA  && AD_DC>0Xeaa ){
                relay_on;
@@ -422,10 +433,9 @@ int main(void)
 					
 				}
 					lev+=1;
-								 if(KEY==reset_Pin){
-            silent++;
-					   KEY=0;
-					 						
+			 	 if(KEY==reset_Pin){
+             silent++;
+					    KEY2=0;					
 					    TX_Buffer7[0]=((TX_Buffer7[0])|0x20);
              
 			}
@@ -437,15 +447,19 @@ int main(void)
 			    INTERNAL_OFF;
 	        EXT_OFF;
 				  lev=0;
+					TX_Buffer7[0]=((TX_Buffer7[0])|0x10);
+	        HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100);
+					TX_Buffer7[0]=((TX_Buffer7[0])|0x20);
+	        HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100);
 
 				}
-        else if(lev<120){
-			   	first_buzzer();
+        else if(lev<121){
+			   	 first_buzzer();
 
 				}
-				else if(lev>=120){
+				else if(lev>=121){
 					 sw=1;
-					second_buzzer();
+					 second_buzzer(lev);
 
 				}
 
@@ -465,11 +479,11 @@ int main(void)
 			 if(pir_check==0){
 					 minu=mj2;
 				   sec=0;
-					PIR_ON;
+				 	 PIR_ON;
 					
 				}
 			 else{
-				 PIR_OFF;
+				   PIR_OFF;
 				 
 			 }
 	}
