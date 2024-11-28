@@ -61,6 +61,7 @@ extern uint8_t TUI;
 extern int sige;
 uint8_t p2=0;
 extern  uint8_t dg;
+int autoo;
 extern uint8_t FGK;
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -274,26 +275,26 @@ void manual(void){
 void ADC_CHECK(void){
         MEASURMENT();
 
-		   if(AD_AC<0XeaA  && AD_DC>0Xeaa ){
+		   if(AD_AC<0X755  && AD_DC>0X755 ){
                relay_on;
 				       WARN1=1;
 				        WARN=0;
 			 }
 			   
-				else if(AD_AC>0Xeea && AD_DC<0Xeea) {
+				else if(AD_AC>0X775 && AD_DC<0X775) {
 					 relay_off; 
 				   WARN=1;
 					  WARN1=0;
 				}			 
 
-					else if(AD_AC>0Xeea && AD_DC>0Xeea ) {
+					else if(AD_AC>0X775 && AD_DC>0X775 ) {
 					  relay_off; 
 						WARN1=0;
 						WARN=0;
 
 				}		
  
- 					else if(AD_AC<0Xeea && AD_DC<0Xeea ) {
+ 					else if(AD_AC<0X775 && AD_DC<0X775 ) {
 					  relay_off; 
 						WARN1=1;
 						WARN=1;
@@ -344,42 +345,80 @@ int main(void)
   MX_USART1_UART_Init();
   MX_I2C1_Init();
   MX_TIM3_Init();
+  
 	MX_TIM2_Init();
 	MX_TIM4_Init();
   MANUAL_ON;
   lcd_init() ;
 	lk();
+		 autoo=*(uint8_t *)0x0801fcc0;
+      if (autoo==0x11){
+				 AUTOPILOT_ON;
+				  MANUAL_OFF;
+							 minu=5;
+			         mj2=5;
+
+			}
+			else{
+				MANUAL_ON;
+				AUTOPILOT_OFF;
+			}
+			if( !HAL_GPIO_ReadPin(auto_GPIO_Port, auto_Pin)){ 
+						
+		 				 AUTOPILOT();
+				    JU=1;		
+						hg=1;
+					 INTERNAL_OFF;
+	          EXT_OFF;
+						 TX_Buffer7[0]=((TX_Buffer7[0])|0x20);//LED OFF
+					}
+			else{
+				
+			 		  manual();
+				    JU=1;		
+						hg=1;
+					 INTERNAL_OFF;
+	          EXT_OFF;
+						 TX_Buffer7[0]=((TX_Buffer7[0])|0x20);//LED OFF			
+				
+				
+			}
+	
 	  HAL_UARTEx_ReceiveToIdle_DMA(&huart1, (uint8_t *) RxBuf1, 10);
    __HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
-   //MX_IWDG_Init();
+  //
+	// 
+   //	MX_IWDG_Init();//saggggggggggggggggg
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+			//event_save(0);
   while (1)
   {
    res;
 			  //RELAY_VIN_ON;
 		   	//HAL_GPIO_WritePin(GPIOB,GPIO_PIN_5,GPIO_PIN_RESET);
   
+		
+		
 	  HAL_RTC_GetTime(&hrtc,&current_time22,RTC_FORMAT_BIN);
 		HAL_RTC_GetDate(&hrtc,&DateToUpdate1,RTC_FORMAT_BIN);
 		
-		if(sige==1){
+		if(sige==1 ){
 			  HAL_I2C_DeInit(&hi2c1);
-
-		  MX_I2C1_Init();
-			 lcd_init() ;
-
-		  HAL_Delay(500);
+		    MX_I2C1_Init();
+			  lcd_init() ;
+		    HAL_Delay(500);
 					 lcd_clear();
 			     HAL_Delay(500);
 				   lcd_init() ;
 			     lcd_clear();
 				   sige=0;
     }
+ 		
  
    else{
 	 
@@ -429,6 +468,7 @@ int main(void)
 			   KEY=0;
 			   HAL_Delay(1000);
 			   event_save(0);
+
 			   lcd_clear();
 					
 				}
@@ -477,9 +517,15 @@ int main(void)
 		}
 
 			 if(pir_check==0){
+				 if(minu==0){
+					 PIR_ON;
+					 
+				 }
+				 else{
 					 minu=mj2;
 				   sec=0;
 				 	 PIR_ON;
+				 }
 					
 				}
 			 else{
@@ -510,13 +556,11 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE
-                              |RCC_OSCILLATORTYPE_LSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE|RCC_OSCILLATORTYPE_LSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
   RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;

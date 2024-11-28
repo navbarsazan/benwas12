@@ -75,9 +75,9 @@ extern uint8_t sec;
 		   	LCD_Blinkoff();
 		   while(KEY!=esc_Pin )	{
 				 res;	
- 				 sprintf(volac,"%0.2fV",(AD_AC*12)/4095);
-				 
-				 sprintf(voldc,"%0.2fV",(AD_DC*12)/4095);
+ 				 sprintf(volac,"%0.2fV",(AD_AC*24)/4095);
+				 HAL_Delay(500);
+				 sprintf(voldc,"%0.2fV",(AD_DC*24)/4095);
 				 
 	       lcd_set_cursor(0, 14); 
 				 lcd_write_string(voldc);	
@@ -102,13 +102,14 @@ extern uint8_t sec;
 				lcd_set_cursor(3,16); 
 			  lcd_write_string("<-");
         if(TUI==1){
-     	  lcd_set_cursor(3,8); 
-			  lcd_write_string("AUTO");
- 
+					lcd_set_cursor(3,8); 
+					lcd_write_string("AUTO");
+
+	 
 				}
         else	{
-     	  lcd_set_cursor(3,8); 
-			  lcd_write_string("MAN");
+					lcd_set_cursor(3,8); 
+					lcd_write_string("MAN");
 
 				}					
 	}
@@ -195,6 +196,13 @@ extern uint8_t sec;
 						      TUI=0;
 									KEY=0;
 					      	lk();
+						       	HAL_FLASH_Unlock();
+									  CLEAR_BIT(FLASH->CR, FLASH_CR_PER);
+								FLASH_PageErase(0x0801fcc0);
+
+											FLASH_Program_HalfWord( 0x0801fcc0,0x0000);	 	    
+											CLEAR_BIT(FLASH->CR, FLASH_CR_PG);
+											HAL_FLASH_Lock();
 							 break;
 								case 1:
 									courser2=1;
@@ -213,6 +221,13 @@ extern uint8_t sec;
 								  minu=5;
 								  mj2=5;
 								  sec=0;
+								  HAL_FLASH_Unlock();
+								FLASH_PageErase(0x0801fcc0);
+											  CLEAR_BIT(FLASH->CR, FLASH_CR_PER);
+
+									FLASH_Program_HalfWord( 0x0801fcc0,0x1111);	 	    
+									CLEAR_BIT(FLASH->CR, FLASH_CR_PG);
+									HAL_FLASH_Lock();
   
 										
 							}
@@ -281,13 +296,27 @@ extern uint8_t sec;
 			 res;	
  	      if(JU==1 ){
 					  if(TUI==1){
-							 lcd_set_cursor(3,8); 
-							 lcd_write_string("AUTO");
+							        lcd_set_cursor(3,8); 
+							        lcd_write_string("AUTO");
+						         	HAL_FLASH_Unlock();
+									    CLEAR_BIT(FLASH->CR, FLASH_CR_PER);
+								      FLASH_PageErase(0x0801fcc0);
+
+											FLASH_Program_HalfWord( 0x0801fcc0,0x1111);	 	    
+											CLEAR_BIT(FLASH->CR, FLASH_CR_PG);
+											HAL_FLASH_Lock();
 					 
 									}
 						 else	{
 									lcd_set_cursor(3,8); 
 									lcd_write_string("MAN");
+						       	HAL_FLASH_Unlock();
+									  CLEAR_BIT(FLASH->CR, FLASH_CR_PER);
+							   	FLASH_PageErase(0x0801fcc0);
+
+											FLASH_Program_HalfWord( 0x0801fcc0,0x0000);	 	    
+											CLEAR_BIT(FLASH->CR, FLASH_CR_PG);
+											HAL_FLASH_Lock();
 
 									}	
 			    JU=0;

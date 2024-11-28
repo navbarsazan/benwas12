@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "tim.h"
 #include "i2c.h"
+#include "main.h"
 extern uint8_t CR ; 
 extern uint8_t TUI;
 extern int sige;
@@ -48,8 +49,8 @@ extern uint8_t temp3;
 #define EXT_ON    HAL_GPIO_WritePin(GPIOB,  GPIO_PIN_14, GPIO_PIN_SET)
 #define EXT_OFF    HAL_GPIO_WritePin(GPIOB,  GPIO_PIN_14, GPIO_PIN_RESET)
 #define manu  HAL_GPIO_ReadPin( GPIOB,GPIO_PIN_0  )
-#define data_led_on  TX_Buffer7[0]=~((~TX_Buffer7[0])|0x08);
-#define data_led_off  TX_Buffer7[0]=((TX_Buffer7[0])|0x08);
+#define data_led_on  TX_Buffer7[0]=~((~TX_Buffer7[0])|0x01);
+#define data_led_off  TX_Buffer7[0]=((TX_Buffer7[0])|0x01);
 #define LED1_OFF TX_Buffer7[0]=((TX_Buffer7[0])|0x01);
 #define LED2_OFF TX_Buffer7[0]=((TX_Buffer7[0])|0x02);
 #define LED3_OFF TX_Buffer7[0]=((TX_Buffer7[0])|0x04);
@@ -410,7 +411,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 				
           if(KEY==auto_Pin){
 						
-						AUTOPILOT();
+		 				 AUTOPILOT();
 				    JU=1;		
 						hg=1;
 					 INTERNAL_OFF;
@@ -444,7 +445,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 			    sw=1;
 					  if(TIMO==1){
 					second_buzzer(lev1);
-					REP=0;
+					//REP=0;
 						}
 				}
          
@@ -453,7 +454,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 				
 			}
 					   if(manu==1&& hg==1){
-					   manual();
+					    manual();
 
 							   // ADC_CHECK();
 
@@ -509,18 +510,18 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 				
 			REP+=1;
  
-		   if(AD_AC<0XdfA  ){
+		   if(AD_AC<0X6fd  ){
 				       TX_Buffer7[0]=~((~TX_Buffer7[0])|0x40);
 
 			 }	
-				else if(AD_AC>0XdfA ) {
+				else if(AD_AC>0X6fd ) {
 						  TX_Buffer7[0]=((TX_Buffer7[0])|0x40);
 				}
-		  if(AD_DC<0XCFA   ){
+		  if(AD_DC<0X67d   ){
 				    TX_Buffer7[0]=~((~TX_Buffer7[0])|0x80);
 
  			 }	
-				   else if(AD_DC>0XCFA  ) {
+				   else if(AD_DC>0X67d  ) {
 						 TX_Buffer7[0]= (( TX_Buffer7[0])|0x80);
 				}
 					 

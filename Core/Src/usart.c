@@ -74,12 +74,13 @@ extern int sige;
 #define EXT_ON    HAL_GPIO_WritePin(GPIOB,  GPIO_PIN_14, GPIO_PIN_SET)
 #define EXT_OFF    HAL_GPIO_WritePin(GPIOB,  GPIO_PIN_14, GPIO_PIN_RESET)
 #define manu  HAL_GPIO_ReadPin( GPIOB,GPIO_PIN_0  )
-#define LED1_ON TX_Buffer7[0]=~((~TX_Buffer7[0])|0x01);
-#define LED1_OFF TX_Buffer7[0]=((TX_Buffer7[0])|0x01);
-#define LED2_ON TX_Buffer7[0]=~((~TX_Buffer7[0])|0x02)
-#define LED2_OFF TX_Buffer7[0]=((TX_Buffer7[0])|0x02);
-#define LED3_ON TX_Buffer7[0]=~((~TX_Buffer7[0])|0x04);
-#define LED3_OFF TX_Buffer7[0]=((TX_Buffer7[0])|0x04);
+#define LED1_ON TX_Buffer7[0]=~((~TX_Buffer7[0])|0x02);
+#define LED1_OFF TX_Buffer7[0]=((TX_Buffer7[0])|0x02);
+#define LED2_ON TX_Buffer7[0]=~((~TX_Buffer7[0])|0x04)
+#define LED2_OFF TX_Buffer7[0]=((TX_Buffer7[0])|0x04);
+#define LED3_ON TX_Buffer7[0]=~((~TX_Buffer7[0])|0x08);
+#define LED3_OFF TX_Buffer7[0]=((TX_Buffer7[0])|0x08);
+
   extern uint8_t TIMO;
 uint8_t out_al=0;
 /* Private typedef -----------------------------------------------------------*/

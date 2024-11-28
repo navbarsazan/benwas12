@@ -167,6 +167,8 @@ extern uint8_t TX_Buffer7[1] ;
 		  	 AUTOPILOT_OFF;
 				 MANUAL_OFF;
 	    	 HAL_I2C_Master_Transmit(&hi2c1,0x41,&led_buf,1,100);
+	  TX_Buffer7[0]=~((~TX_Buffer7[0])|0x08);
+
 				 HAL_Delay(1000);
 		     LED_STATUS=1;
 
@@ -289,7 +291,7 @@ extern uint8_t TX_Buffer7[1] ;
 								
 								 // code block
 									 LED_TEST();
-
+TX_Buffer7[0]=0xff;
 										HAL_I2C_Master_Transmit(&hi2c1,0x41,TX_Buffer7,1,100);
 										HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8|GPIO_PIN_3|GPIO_PIN_2, GPIO_PIN_RESET);
 										page3_list();
@@ -297,12 +299,25 @@ extern uint8_t TX_Buffer7[1] ;
 										lcd_set_cursor(courser3, 0); 
 										LCD_BlinkOn();
 										KEY=0;
-											if(TUI==1){
+										if(TUI==1){
 											AUTOPILOT_ON;
 											MANUAL_OFF;
-											
+						       	HAL_FLASH_Unlock();
+									  CLEAR_BIT(FLASH->CR, FLASH_CR_PER);
+							       	FLASH_PageErase(0x0801fcc0);
+
+											FLASH_Program_HalfWord( 0x0801fcc0,0x1111);	 	    
+											CLEAR_BIT(FLASH->CR, FLASH_CR_PG);
+											HAL_FLASH_Lock();
 										}
 										else{
+						       	HAL_FLASH_Unlock();
+									  CLEAR_BIT(FLASH->CR, FLASH_CR_PER);
+								FLASH_PageErase(0x0801fcc0);
+
+											FLASH_Program_HalfWord( 0x0801fcc0,0x0000);	 	    
+											CLEAR_BIT(FLASH->CR, FLASH_CR_PG);
+											HAL_FLASH_Lock();
 											
 											AUTOPILOT_OFF;
 											MANUAL_ON;			

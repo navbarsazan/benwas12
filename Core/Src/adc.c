@@ -28,7 +28,7 @@ ADC_HandleTypeDef hadc1;
 ADC_HandleTypeDef hadc2;
 
 /* ADC1 init function */
-void MX_ADC1_Init(void)
+  void MX_ADC1_Init(void)
 {
 
   /* USER CODE BEGIN ADC1_Init 0 */
@@ -69,8 +69,13 @@ void MX_ADC1_Init(void)
   /* USER CODE END ADC1_Init 2 */
 
 }
-/* ADC2 init function */
-void MX_ADC2_Init(void)
+
+/**
+  * @brief ADC2 Initialization Function
+  * @param None
+  * @retval None
+  */
+  void MX_ADC2_Init(void)
 {
 
   /* USER CODE BEGIN ADC2_Init 0 */
