@@ -1,0 +1,23 @@
+name: Build Keil Project
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up Keil Environment
+      run: |
+        set PATH=C:\Keil_v5\UV4;%PATH%
+
+    - name: Build Keil Project
+      run: |
+        UV4.exe -b ./ProjectName.uvprojx -o BuildLog.txt
